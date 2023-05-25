@@ -3,76 +3,219 @@
 namespace Blueways\BwGuild\Domain\Model;
 
 use Blueways\BwGuild\Utility\SlugUtility;
-use SourceBroker\T3api\Annotation\ApiResource;
+use SourceBroker\T3api\Annotation as T3api;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Annotation\ORM\Lazy;
 use TYPO3\CMS\Extbase\Annotation\Validate;
 use TYPO3\CMS\Extbase\Domain\Model\Category;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
-
+use SourceBroker\T3api\Filter\SearchFilter;
+use SourceBroker\T3api\Filter\OrderFilter;
+use SourceBroker\T3api\Annotation\Serializer\Exclude;
 /**
- * @ApiResource(
+ * @T3api\ApiResource(
  *     collectionOperations={
  *          "get"={
  *              "path"="/offer",
+ *              "normalizationContext"={
+ *                  "groups"={"api_get_collection_bwguild"}
+ *              },
  *          },
  *           "post"={
  *              "method"="POST",
  *              "path"="/offer",
+ *              "normalizationContext"={
+ *                  "groups"={"api_post_offer_collection_bwguild"}
+ *              },
  *          },
  *     },
  *     itemOperations={
  *          "get"={
  *              "path"="/offer/{id}",
+ *              "normalizationContext"={
+ *                  "groups"={"api_get_item_bwguild"}
+ *              },
+ *          },
+ *          "patch"={
+ *              "method"="PATCH",
+ *              "path"="/offer/{id}",
+ *              "normalizationContext"={
+ *                  "groups"={"api_patch_offer_item_bwguild"}
+ *              },
+ *          },
+ *          "delete"={
+ *              "method"="DELETE",
+ *              "path"="/offer{id}",
  *          }
  *     },
+ *     attributes={
+ *          "persistence"={
+ *              "storagePid"="4",
+ *              "recursive"=1
+ *          }
+ *     }
  * )
  *
+ * @T3api\ApiFilter(
+ *     SearchFilter::class,
+ *     properties={"title"}
+ * )
+ *
+ * @T3api\ApiFilter(
+ *     SearchFilter::class,
+ *     properties={"recordType"}
+ * )
+ *
+ * @T3api\ApiFilter(
+ *     OrderFilter::class,
+ *     properties={"uid","crdate","title"}
+ * )
  */
 class Offer extends AbstractEntity
 {
     /**
      * @Validate("NotEmpty")
+     * @var string
+     * @T3api\Serializer\Groups({
+     *     "api_get_collection_bwguild",
+     *     "api_get_item_bwguild",
+     *     "api_patch_offer_item_bwguild",
+     *     "api_post_offer_collection_bwguild",
+     * })
      */
     protected string $title = '';
 
+    /**
+     * @var string
+     * @T3api\Serializer\Groups({
+     *     "api_get_item_bwguild",
+     *     "api_patch_offer_item_bwguild",
+     *     "api_post_offer_collection_bwguild",
+     * })
+     */
     protected string $address = '';
 
+    /**
+     * @var string
+     * @T3api\Serializer\Groups({
+     *     "api_get_item_bwguild",
+     *     "api_patch_offer_item_bwguild",
+     *     "api_post_offer_collection_bwguild",
+     * })
+     */
     protected string $zip = '';
 
+    /**
+     * @var string
+     * @T3api\Serializer\Groups({
+     *     "api_get_item_bwguild",
+     *     "api_patch_offer_item_bwguild",
+     *     "api_post_offer_collection_bwguild",
+     * })
+     */
     protected string $city = '';
 
+    /**
+     * @var string
+     * @T3api\Serializer\Groups({
+     *     "api_get_item_bwguild",
+     *     "api_patch_offer_item_bwguild",
+     *     "api_post_offer_collection_bwguild",
+     * })
+     */
     protected string $country = '';
 
+    /**
+     * @T3api\Serializer\Groups({
+     *     "api_get_item_bwguild",
+     *     "api_patch_offer_item_bwguild",
+     *     "api_post_offer_collection_bwguild",
+     * })
+     */
     protected string $description = '';
 
     protected string $startDate = '';
 
+    /**
+     * @var User|null
+     * @T3api\Serializer\Groups({
+     *     "api_get_item_bwguild"
+     * })
+     */
     protected ?User $feUser = null;
 
 
     /**
      * @var ObjectStorage<User>|null
-     * @Lazy
+     * @T3api\ORM\Cascade("persist")
      */
     protected ?ObjectStorage $feUsers = null;
 
+    /**
+     * @var string
+     * @T3api\Serializer\Groups({
+     *     "api_get_item_bwguild"
+     * })
+     */
     protected string $slug = '';
 
+    /**
+     * @var string
+     * @T3api\Serializer\Groups({
+     *     "api_get_item_bwguild"
+     * })
+     */
     protected string $contactPerson = '';
 
     /**
      * @Validate("EmailAddress")
+     * @T3api\Serializer\Groups({
+     *     "api_get_item_bwguild",
+     *     "api_patch_offer_item_bwguild",
+     *     "api_post_offer_collection_bwguild",
+     * })
      */
     protected string $contactMail = '';
 
+    /**
+     * @var string
+     * @T3api\Serializer\Groups({
+     *     "api_get_item_bwguild",
+     *     "api_patch_offer_item_bwguild",
+     *     "api_post_offer_collection_bwguild",
+     * })
+     */
     protected string $contactPhone = '';
 
+    /**
+     * @var string
+     * @T3api\Serializer\Groups({
+     *     "api_get_item_bwguild",
+     *     "api_patch_offer_item_bwguild",
+     *     "api_post_offer_collection_bwguild",
+     * })
+     */
     protected string $conditions = '';
 
+    /**
+     * @var string
+     * @T3api\Serializer\Groups({
+     *     "api_get_item_bwguild",
+     *     "api_patch_offer_item_bwguild",
+     *     "api_post_offer_collection_bwguild",
+     * })
+     */
     protected string $possibilities = '';
 
+    /**
+     * @var int
+     * @T3api\Serializer\Groups({
+     *     "api_get_item_bwguild",
+     *     "api_patch_offer_item_bwguild",
+     *     "api_post_offer_collection_bwguild",
+     * })
+     */
     protected int $recordType = 0;
 
     protected bool $hidden = false;
@@ -105,11 +248,17 @@ class Offer extends AbstractEntity
     /**
      * @var ObjectStorage<Category>|null
      * @Lazy
+     * @T3api\Serializer\Groups({
+     *     "api_get_item_bwguild"
+     * })
      */
     protected ?ObjectStorage $categories = null;
 
     /**
      * @var ObjectStorage<FileReference>|null
+     * @T3api\Serializer\Groups({
+     *     "api_get_item_bwguild"
+     * })
      */
     protected ?ObjectStorage $images = null;
 

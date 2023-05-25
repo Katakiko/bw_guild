@@ -8,86 +8,221 @@ use TYPO3\CMS\Extbase\Annotation\ORM\Lazy;
 use TYPO3\CMS\Extbase\Domain\Model\Category;
 use TYPO3\CMS\Extbase\Domain\Model\FrontendUser;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
-use SourceBroker\T3api\Annotation\ApiResource;
+use TYPO3\CMS\Extbase\Domain\Model\FileReference;
+use SourceBroker\T3api\Annotation as T3api;
+use SourceBroker\T3api\Filter\SearchFilter;
+use SourceBroker\T3api\Filter\OrderFilter;
+use SourceBroker\T3api\Annotation\Serializer\Exclude;
+use SourceBroker\T3api\Annotation\ORM\Cascade;
+
 /**
- * @ApiResource(
+ * @T3api\ApiResource(
  *     collectionOperations={
  *          "get"={
  *              "path"="/users",
+ *               "normalizationContext"={
+ *                  "groups"={"api_get_collection_bwguild"}
+ *              },
  *          },
  *          "post"={
  *              "method"="POST",
  *              "path"="/users",
+ *              "normalizationContext"={
+ *                  "groups"={"api_post_collection_bwguild"}
+ *              },
  *          },
  *     },
  *     itemOperations={
- *          "get"={
- *              "path"="/users/{id}",
+ *          "get_current"={
+ *              "path"="/users/current",
+ *              "normalizationContext"={
+ *                  "groups"={"api_get_item_bwguild"}
+ *              },
+ *          },
+ *          "patch_current"={
+ *              "method"="PATCH",
+ *              "path"="/users/current",
+ *              "normalizationContext"={
+ *                  "groups"={"api_patch_item_bwguild"}
+ *              },
+ *          },
+ *          "delete"={
+ *              "method"="DELETE",
+ *              "path"="/users{id}",
  *          }
  *     },
+ *
+ *     attributes={
+ *          "persistence"={
+ *              "storagePid"="4",
+ *              "recursive"=1
+ *          },
+ *          "upload"={
+ *              "folder"="1:/user_upload/",
+ *              "allowedFileExtensions"={"jpg", "jpeg", "png"},
+ *          }
+ *     }
+ * )
+ *
+ * @T3api\ApiFilter(
+ *     SearchFilter::class,
+ *     properties={"features.name":"partial"}
+ * )
+ *
+ * @T3api\ApiFilter(
+ *     SearchFilter::class,
+ *     properties={"username":"partial"}
+ * )
+ *
+ * @T3api\ApiFilter(
+ *     SearchFilter::class,
+ *     properties={"categories"}
+ * )
+ *
+ * @T3api\ApiFilter(
+ *     OrderFilter::class,
+ *     properties={"uid","crdate","title"}
  * )
  *
  */
 class User extends FrontendUser
 {
+    /**
+     * @var string
+     * @T3api\Serializer\Groups({
+     *     "api_post_collection_bwguild",
+     *     "api_get_collection_bwguild",
+     *     "api_get_item_bwguild",
+     *     "api_patch_item_bwguild",
+     * })
+     */
+    protected $username = '';
+
+    /**
+     * @var string
+     * @Exclude()
+     */
     protected string $shortName = '';
 
+    /**
+     * @T3api\Serializer\Groups({
+     *     "api_post_collection_bwguild",
+     * })
+     */
     protected string $passwordRepeat = '';
 
+    /**
+     * @var string
+     * @T3api\Serializer\Groups({
+     *     "api_post_collection_bwguild",
+     * })
+     */
+    protected $password = '';
+
+    /**
+     * @var string
+     * @T3api\Serializer\Groups({
+     *     "api_post_collection_bwguild",
+     *     "api_get_collection_bwguild",
+     *     "api_get_item_bwguild",
+     *     "api_patch_item_bwguild",
+     * })
+     */
     protected string $mobile = '';
 
+    /**
+     * @var string
+     * @Exclude()
+     */
     protected string $memberNr = '';
 
-    protected string $aaa = '';
-
     /**
-     * @return string
+     * @var \DateTime|null
+     * @Exclude("true")
      */
-    public function getAaa(): string
-    {
-        return $this->aaa;
-    }
-
-    /**
-     * @param string $aaa
-     */
-    public function setAaa(string $aaa): void
-    {
-        $this->aaa = $aaa;
-    }
-
     protected ?\DateTime $tstamp = null;
 
     /**
      * @var ObjectStorage<Offer>|null
      * @Lazy
+     * @T3api\ORM\Cascade("persist")
+     * @T3api\Serializer\Groups({
+     *     "api_get_collection_bwguild",
+     *     "api_get_item_bwguild",
+     *     "api_patch_item_bwguild",
+     * })
      */
-    protected ?ObjectStorage $offers = null;
+    protected ?ObjectStorage $offers;
 
     /**
      * @var ObjectStorage<AbstractUserFeature>|null
      * @Lazy
+     * @T3api\Serializer\Groups({
+     *     "api_get_collection_bwguild",
+     *     "api_get_item_bwguild",
+     *     "api_patch_item_bwguild",
+     * })
+     * @T3api\ORM\Cascade("persist")
      */
-    protected ?ObjectStorage $features = null;
+    protected ?ObjectStorage $features;
 
     /**
      * @var ObjectStorage<Category>|null
      * @Lazy
+     * @T3api\Serializer\Groups({
+     *     "api_get_collection_bwguild",
+     *     "api_get_item_bwguild",
+     *     "api_patch_item_bwguild",
+     * })
      */
-    protected ?ObjectStorage $categories = null;
+    protected ?ObjectStorage $categories;
 
+    /**
+     * @var float
+     * @Exclude("true")
+     */
     protected float $latitude = 0.0;
 
+    /**
+     * @var float
+     * @Exclude("true")
+     */
     protected float $longitude = 0.0;
 
     /**
-     * @var ObjectStorage<Offer>|null
+     * @var ObjectStorage<Offer>
      * @Lazy
+     * @T3api\Serializer\Groups({
+     *     "api_get_collection_bwguild",
+     *     "api_get_item_bwguild",
+     *     "api_patch_item_bwguild",
+     * })
      */
-    protected ?ObjectStorage $sharedOffers = null;
+    protected $sharedOffers;
 
+
+    /**
+     * @var bool
+     * @Exclude("true")
+     */
     protected bool $publicProfile = true;
 
+    public function getFrontendUser(): ?int
+    {
+        if ($this->$GLOBALS['TSFE']->fe_user->user['uid']) {
+            $this->getBookmarks();
+        }
+        return null;
+    }
+
+    /**
+     * @var string
+     * @T3api\ORM\Cascade("persist")
+     * @T3api\Serializer\Groups({
+     *     "api_get_item_bwguild",
+     *     "api_patch_item_bwguild",
+     * })
+     */
     protected string $bookmarks = '';
 
     public function getBookmarks(): string
@@ -95,6 +230,10 @@ class User extends FrontendUser
         return $this->bookmarks;
     }
 
+    /**
+     * @var string
+     * @Exclude("true")
+     */
     protected string $slug = '';
 
     public function getSlug(): string
@@ -102,7 +241,41 @@ class User extends FrontendUser
         return $this->slug;
     }
 
+    /**
+     * @var FileReference|null
+     * @T3api\Serializer\Groups({
+     *     "api_get_collection_bwguild",
+     *     "api_get_item_bwguild",
+     *     "api_patch_item_bwguild",
+     * })
+     */
     protected ?FileReference $logo = null;
+
+    /**
+     * @var ObjectStorage<FileReference>
+     * @T3api\Serializer\Groups({
+     *     "api_get_collection_bwguild",
+     *     "api_get_item_bwguild",
+     *     "api_patch_item_bwguild",
+     * })
+     */
+    protected $image = null;
+
+    public function getImage(): ObjectStorage
+    {
+        return $this->image;
+    }
+
+    public function setImage(ObjectStorage $image): void
+    {
+        $this->image = $image;
+    }
+
+    public function addImage(FileReference $image): void
+    {
+        $this->image->attach($image);
+    }
+
 
     public function __construct(string $username = '', string $password = '')
     {

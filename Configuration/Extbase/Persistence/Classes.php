@@ -86,11 +86,4 @@ return [
         'recordType' => 2,
         'tableName' => 'tx_bwguild_domain_model_feature',
     ],
-
-    // Tables for API-Endpoints
-
-
-    Blueways\BwGuild\Domain\Model\UserFeatureEndpoints::class => [
-        'tableName' => 'tx_bwguild_domain_model_feature',
-    ],
 ];

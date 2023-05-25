@@ -1,0 +1,44 @@
+### USER: Get all users
+# @no-cookie-jar
+GET https://bw-guild.ddev.site/_api/users
+Accept: application/json
+
+
+> ./api-response-handler.js
+
+### USER: Post a new user
+# @no-cookie-jar
+POST https://bw-guild.ddev.site/_api/users
+Accept: application/json
+
+{
+  "username": "Name",
+  "password": "string",
+  "passwordRepeat": "string",
+  "mobile": "0356746457",
+}
+
+### USER: Delete the user
+# @no-cookie-jar
+DELETE https://bw-guild.ddev.site/_api/users22
+Accept: application/json
+
+
+### FEATURE: Get all features
+# @no-cookie-jar
+PATCH https://bw-guild.ddev.site/_api/users/current
+Accept: application/json
+
+{
+  "image": [
+    {"uidLocal":11}
+  ],
+  "offers": [],
+  "features": [
+{
+      "name": "F3",
+      "recordType": "0"
+    }],
+  "categories": [],
+  "sharedOffers": []
+}

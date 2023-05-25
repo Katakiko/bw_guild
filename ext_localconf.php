@@ -102,3 +102,5 @@ $GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects'][\TYPO3\CMS\Extbase\Mvc\Controller\
         TYPO3\CMS\Extbase\Mvc\Controller\Argument::class,
         \Blueways\BwGuild\Extbase\Controller\Argument::class
     );
+$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['t3api']['operationHandlers'][\Blueways\BwGuild\OperationHandler\UserGetOperationHandler::class] = 1000;
+$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['t3api']['operationHandlers'][\Blueways\BwGuild\OperationHandler\UserPatchOperationHandler::class] = 1010;

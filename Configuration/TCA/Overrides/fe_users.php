@@ -156,12 +156,6 @@ call_user_func(function () {
             'config' => [
                 'type' => 'input',
             ]
-        ],
-        'aaa' => [
-            'label' => 'aaa',
-            'config' => [
-                'type' => 'input',
-            ]
         ]
     ];
     ExtensionManagementUtility::addTCAcolumns('fe_users', $tempColumns);
@@ -176,7 +170,6 @@ call_user_func(function () {
     ExtensionManagementUtility::addToAllTCAtypes('fe_users', 'bookmarks', '', 'after:slug');
     ExtensionManagementUtility::addToAllTCAtypes('fe_users', 'features', '', 'after:bookmarks');
     ExtensionManagementUtility::addToAllTCAtypes('fe_users', 'tstamp', '', 'after:company');
-    ExtensionManagementUtility::addToAllTCAtypes('fe_users', 'aaa', '', 'after:company');
     ExtensionManagementUtility::addToAllTCAtypes(
         'fe_users',
         '--div--;LLL:EXT:bw_guild/Resources/Private/Language/locallang_tca.xlf:user.offers,offers',
